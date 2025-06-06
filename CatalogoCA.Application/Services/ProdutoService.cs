@@ -1,38 +1,55 @@
-﻿using CatalogoCA.Application.DTOs;
+﻿using AutoMapper;
+using CatalogoCA.Application.DTOs;
 using CatalogoCA.Application.Interfaces;
+using CatalogoCA.Domain.Entities;
+using CatalogoCA.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CatalogoCA.Application.Services
+public class ProdutoService : IProdutoService
 {
-    public class ProdutoService : IProdutoService
+    private IProdutoRepository _productRepository;
+
+    private readonly IMapper _mapper;
+    public ProdutoService(IMapper mapper, IProdutoRepository productRepository)
     {
-        public Task Add(ProdutoDTO produtoDto)
-        {
-            throw new NotImplementedException();
-        }
+        _productRepository = productRepository ??
+             throw new ArgumentNullException(nameof(productRepository));
 
-        public Task<ProdutoDTO> GetById(int? id)
-        {
-            throw new NotImplementedException();
-        }
+        _mapper = mapper;
+    }
 
-        public Task<IEnumerable<ProdutoDTO>> GetProdutos()
-        {
-            throw new NotImplementedException();
-        }
+    public async Task<IEnumerable<ProdutoDTO>> GetProdutos()
+    {
+        var productsEntity = await _productRepository.GetProdutosAsync();
+        return _mapper.Map<IEnumerable<ProdutoDTO>>(productsEntity);
+    }
 
-        public Task Remove(int? id)
-        {
-            throw new NotImplementedException();
-        }
+    public async Task<ProdutoDTO> GetById(int? id)
+    {
+        var productEntity = await _productRepository.GetByIdAsync(id);
+        return _mapper.Map<ProdutoDTO>(productEntity);
+    }
 
-        public Task Update(ProdutoDTO produtoDto)
-        {
-            throw new NotImplementedException();
-        }
+    public async Task Add(ProdutoDTO productDto)
+    {
+        var productEntity = _mapper.Map<Produto>(productDto);
+        await _productRepository.CreateAsync(productEntity);
+    }
+
+    public async Task Update(ProdutoDTO productDto)
+    {
+
+        var productEntity = _mapper.Map<Produto>(productDto);
+        await _productRepository.UpdateAsync(productEntity);
+    }
+
+    public async Task Remove(int? id)
+    {
+        var productEntity = _productRepository.GetByIdAsync(id).Result;
+        await _productRepository.RemoveAsync(productEntity);
     }
 }
