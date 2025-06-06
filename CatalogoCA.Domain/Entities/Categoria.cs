@@ -18,7 +18,7 @@ namespace CatalogoCA.Domain.Entities
 
         public string Nome { get; private set; }
         public string ImagemUrl { get; private set; }
-        public ICollection<Produto> produtos { get; set; }
+        public ICollection<Produto> Produtos { get; set; }
 
         private void ValidateDomain(string nome, string imagemUrl)
         {

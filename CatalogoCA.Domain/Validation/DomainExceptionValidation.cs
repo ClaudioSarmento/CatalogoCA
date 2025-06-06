@@ -9,3 +9,4 @@
             if (hasError) { throw new DomainExceptionValidation(error); }
         }
     }
+}
